@@ -39,7 +39,7 @@ let getBaseUrl = () => {
   if (isDevelopment) {
     return 'http://localhost:3000';
   } else {
-    return 'http://s3.amazonaws.com/eatodo'
+    return 'http://eatodo.s3.amazonaws.com/'
   }
 }
 
