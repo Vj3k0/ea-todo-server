@@ -1,0 +1,30 @@
+{
+  "name": "ea-todo-server",
+  "version": "1.0.0",
+  "description": "Update server for distributing automatic updates for EA Todo.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "NODE_ENV='development' PORT=3000 npm run start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vj3k0/ea-todo-server.git"
+  },
+  "keywords": [
+    "electron",
+    "angular",
+    "update"
+  ],
+  "author": "Vjekoslav Ratkajec",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Vj3k0/ea-todo-server/issues"
+  },
+  "homepage": "https://github.com/Vj3k0/ea-todo-server#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "morgan": "^1.7.0"
+  }
+}
