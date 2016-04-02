@@ -24,7 +24,7 @@ app.get('/updates/latest', (req, res) => {
         } else {
             res.json({
                 name: manifest.name,
-                url: `${getBaseUrl()}/updates/releases/osx/${latest}/eatodo-${latest}-mac.zip`,
+                url: `${getBaseUrl()}/updates/releases/osx/eatodo-${latest}-mac.zip`,
                 notes: manifest.notes,
                 pub_date: manifest.pub_date
             });
