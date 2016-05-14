@@ -25,6 +25,7 @@
   "homepage": "https://github.com/Vj3k0/ea-todo-server#readme",
   "dependencies": {
     "express": "^4.13.4",
-    "morgan": "^1.7.0"
+    "morgan": "^1.7.0",
+    "request": "^2.72.0"
   }
 }

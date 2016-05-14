@@ -1,35 +1,29 @@
 'use strict';
-const fs = require('fs');
 const express = require('express');
 const path = require('path');
 const app = express();
-const http = require('http');
+const request = require('request');
 const isDevelopment = process.env.NODE_ENV === 'development';
 
+var version;
 // Fetch manifest info every 5 minutes
 const FETCH_INTERVAL = 300000;
-
-var manifest = null;
 
 app.use(require('morgan')('dev'));
 
 if (isDevelopment) {
-    app.use('/updates/releases', express.static(path.join(__dirname, 'updates/releases')));
+    app.use('/updates/latest', express.static(path.join(__dirname, 'updates/latest')));
 }
 
 app.get('/updates/latest', (req, res) => {
-    if (manifest) {
-        const latest = manifest.version;
+    if (version) {
         const clientVersion = req.query.v;
 
-        if (clientVersion === latest) {
+        if (clientVersion === version) {
             res.status(204).end();
         } else {
             res.json({
-                name: manifest.name,
-                url: `${getBaseUrl()}/updates/releases/osx/eatodo-${latest}-mac.zip`,
-                notes: manifest.notes,
-                pub_date: manifest.pub_date
+                url: `${getBaseUrl()}/updates/latest/osx/eatodo-${version}-mac.zip`
             });
         }
     }
@@ -39,39 +33,30 @@ app.get('/updates/latest', (req, res) => {
 });
 
 let getBaseUrl = () => {
-  if (isDevelopment) {
-    return 'http://localhost:3000';
-  } else {
-    return 'http://eatodo.s3.amazonaws.com'
-  }
+    if (isDevelopment) {
+        return 'http://localhost:3000';
+    } else {
+        return 'http://eatodo.s3.amazonaws.com'
+    }
 }
 
-let getManifest = () => {
-    console.log(`Checking manifest from ${manifestUrl}`);
-    http.get(manifestUrl, function(res){
-        var body = '';
-
-        res.on('data', function(chunk){
-            body += chunk;
-        });
-
-        res.on('end', function(){
-            var remoteManifest = JSON.parse(body);
-            if (!manifest || manifest.version !== remoteManifest.version) {
-                manifest = remoteManifest;
-                console.log(`Manifest loaded - latest v${manifest.version}`);
-            }
-        });
-    }).on('error', function(e){
-        console.log("Got an error: ", e);
+let getVersion = () => {
+    console.log(`Fetching latest version from ${versionUrl}`);
+    request.get(versionUrl, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            version = body;
+        }
+        else if (error) {
+            console.error(error);
+        }
     });
     
-    setTimeout(getManifest, FETCH_INTERVAL);
+    setTimeout(getVersion, FETCH_INTERVAL);
 }
 
-const manifestUrl = `${getBaseUrl()}/updates/releases/osx/manifest.json`;
-getManifest();
+const versionUrl = `${getBaseUrl()}/updates/latest/osx/VERSION`;
+getVersion();
 
 app.listen(process.env.PORT, () => {
-  console.log(`Express server listening on port ${process.env.PORT}`);
+    console.log(`Express server listening on port ${process.env.PORT}`);
 });
